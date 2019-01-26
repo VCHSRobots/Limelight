@@ -10,6 +10,9 @@ package frc.robot;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -24,6 +27,12 @@ public class Robot extends TimedRobot {
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
+  
+  NetworkTableEntry tx;
+  NetworkTableEntry ty;
+  NetworkTableEntry ta;
+  
+
   /**
    * This function is run when the robot is first started up and should be
    * used for any initialization code.
@@ -33,7 +42,15 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+     tx = table.getEntry("tx");
+     ty = table.getEntry("ty");
+     ta = table.getEntry("ta");
   }
+
+    double x = tx.getDouble(0.0);
+    double y = tx.getDouble(0.0);
+    double area = ta.getDouble(0.0);
 
   /**
    * This function is called every robot packet, no matter the mode. Use
@@ -86,6 +103,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    x = tx.getDouble(0.0);
+    y = ty.getDouble(0.0);
+    area = ta.getDouble(0.0);
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
   }
 
   /**
