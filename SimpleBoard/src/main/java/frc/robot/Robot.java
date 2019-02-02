@@ -8,29 +8,35 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-/**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
- * project.
- */
+
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  Joystick m_driverJoystick;
+  String test;
+  int val;
 
-  
-  NetworkTableEntry tx;
-  NetworkTableEntry ty;
-  NetworkTableEntry ta;
+
+
+  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); //LimelightNetworkTable
+  //Read only variables:
+  NetworkTableEntry tx = table.getEntry("tx");
+  NetworkTableEntry ty = table.getEntry("ty");
+  NetworkTableEntry ta = table.getEntry("ta");
+  NetworkTableEntry tv = table.getEntry("tv");
+  NetworkTableEntry getPipe = table.getEntry("getpipe");
+  //Writable variables:
+  NetworkTableEntry ledMode = table.getEntry("ledMode");
+
   
 
   /**
@@ -42,15 +48,9 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
-     tx = table.getEntry("tx");
-     ty = table.getEntry("ty");
-     ta = table.getEntry("ta");
+    test = "Hello World";
+    val = 0;
   }
-
-    double x = tx.getDouble(0.0);
-    double y = tx.getDouble(0.0);
-    double area = ta.getDouble(0.0);
 
   /**
    * This function is called every robot packet, no matter the mode. Use
@@ -103,12 +103,28 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    x = tx.getDouble(0.0);
-    y = ty.getDouble(0.0);
-    area = ta.getDouble(0.0);
+    
+    double x = tx.getDouble(0.0);
+    double y = ty.getDouble(0.0);
+    double area = ta.getDouble(0.0);
+    double skew = tv.getDouble(0.0);
+    double pipeline = getPipe.getDouble(0.0);
+
+    if(test=="Off"){
+      ledMode.setNumber(1);
+    }
+    else if (test=="On"){
+      ledMode.setNumber(0);
+    }
+
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
+    SmartDashboard.putNumber("LimelightSkew", skew);
+    SmartDashboard.putNumber("LimelightPipeline", pipeline);
+
+    SmartDashboard.putString("TestString", test);
+    SmartDashboard.putNumber("val", val);
   }
 
   /**
