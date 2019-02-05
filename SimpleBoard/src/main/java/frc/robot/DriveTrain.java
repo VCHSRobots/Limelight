@@ -8,12 +8,13 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class DriveTrain {
 
     //Constants a la conner
-    public static int xAxisConstant = 4;
-    public static int yAxisConstant = 0;
+    //public static int xAxisConstant = 4;
+    //public static int yAxisConstant = 0;
     //Joysticks
     Joystick m_Joystick;
 
@@ -31,12 +32,16 @@ public class DriveTrain {
     //Periodic equations and drive a la Conner
     public void teleopPeriodic(){
         double xAxis, yAxis;
-		xAxis = m_Joystick.getRawAxis(xAxisConstant);
-        yAxis = m_Joystick.getRawAxis(yAxisConstant);
+		xAxis = m_Joystick.getRawAxis(4);
+        yAxis = m_Joystick.getRawAxis(1);
         
         double leftSide, rightSide;
         rightSide = yAxis + xAxis;
         leftSide = xAxis - yAxis;
+        SmartDashboard.putNumber("xAxis", xAxis);
+        SmartDashboard.putNumber("yAxis", yAxis);
+        SmartDashboard.putNumber("leftSide", leftSide);
+        SmartDashboard.putNumber("rightSide", rightSide);
     }
     
     public void testPeriodic() {   

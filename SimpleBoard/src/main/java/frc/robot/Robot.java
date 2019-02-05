@@ -19,25 +19,24 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 public class Robot extends TimedRobot {
   private static final String kDefaultAuto = "Default";
   private static final String kCustomAuto = "My Auto";
+
+  //Light Modes
+  //private static final String DefaultLightsMode = "Default";
+  //private static final String LightsOn = "On";
+  //private static final String LightsOff = "Off";
+
   private String m_autoSelected;
+  //private String l_modeSelected;
+  
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  //private final SendableChooser<String> l_chooser = new SendableChooser<>();
+
+  private DriveTrain m_DriveTrain = new DriveTrain();
+  private Limelight m_Limelight = new Limelight();
+
   Joystick m_driverJoystick;
   String test;
   int val;
-
-
-
-  NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight"); //LimelightNetworkTable
-  //Read only variables:
-  NetworkTableEntry tx = table.getEntry("tx");
-  NetworkTableEntry ty = table.getEntry("ty");
-  NetworkTableEntry ta = table.getEntry("ta");
-  NetworkTableEntry tv = table.getEntry("tv");
-  NetworkTableEntry getPipe = table.getEntry("getpipe");
-  //Writable variables:
-  NetworkTableEntry ledMode = table.getEntry("ledMode");
-
-  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -47,9 +46,21 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
+
+    //l_chooser.setDefaultOption("Lights Default", DefaultLightsMode);
+    //l_chooser.addOption("Lights On", LightsOn);
+    //l_chooser.addOption("Lights Off", LightsOff);
+    
+
     SmartDashboard.putData("Auto choices", m_chooser);
+    //SmartDashboard.putData("Limelight Lights", l_chooser);
+
+    m_driverJoystick = new Joystick(0);
+    m_DriveTrain.robotInit(m_driverJoystick);
+    m_Limelight.robotInit(m_driverJoystick);
     test = "Hello World";
     val = 0;
+
   }
 
   /**
@@ -78,7 +89,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
+    m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
   }
 
@@ -103,28 +114,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    
-    double x = tx.getDouble(0.0);
-    double y = ty.getDouble(0.0);
-    double area = ta.getDouble(0.0);
-    double skew = tv.getDouble(0.0);
-    double pipeline = getPipe.getDouble(0.0);
-
-    if(test=="Off"){
-      ledMode.setNumber(1);
-    }
-    else if (test=="On"){
-      ledMode.setNumber(0);
-    }
-
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
-    SmartDashboard.putNumber("LimelightSkew", skew);
-    SmartDashboard.putNumber("LimelightPipeline", pipeline);
 
     SmartDashboard.putString("TestString", test);
     SmartDashboard.putNumber("val", val);
+    
+    m_DriveTrain.teleopPeriodic();
+    m_Limelight.teleopPeriodic();
   }
 
   /**
